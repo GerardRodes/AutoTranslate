@@ -182,5 +182,5 @@ class AutoTranslate(object):
         
         
       
-at = AutoTranslate(domain='product.incidences')
+at = AutoTranslate(domain={{{ package.dottedname }}})
 at()
