@@ -76,10 +76,25 @@ class AutoTranslate(object):
       file_info['headers']['PO-Revision-Date'] = datetime.now().strftime('%Y-%m-%d %H:%M %z')
 
       with open(file_info['file_path'], 'rU') as file:
-        file_info['lines'] = [line if isinstance(line, unicode) else line.decode('utf-8') for line in file.readlines()]
-        
+        unicode_lines = [line if isinstance(line, unicode) else line.decode('utf-8') for line in file.readlines()]
+        file_info['lines'] = []
+
+        ids = {}
+        for i, line in enumerate(unicode_lines):
+          if line.startswith('msgid'):
+            msgid = line.strip('\n')[7:-1]
+
+            if not ids.get(msgid, False):
+              ids[msgid] = True
+              file_info['lines'].append(line)
+              file_info['lines'].append(unicode_lines[i+1])
+
+          elif not line.startswith('msgstr'):
+            if i > 0 and not (line == '\n' and line == unicode_lines[i-1]):
+              file_info['lines'].append(line)
+
+
         for i, line in enumerate(file_info['lines']):
-          
           if line.startswith('msgid'):
             # Parsing translations
 
@@ -180,7 +195,6 @@ class AutoTranslate(object):
         
         
         
-        
-      
+   
 at = AutoTranslate(domain={{{ package.dottedname }}})
 at()
