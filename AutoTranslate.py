@@ -106,7 +106,7 @@ class AutoTranslate(object):
     for file in self.files:
       print 'translating to ' + file['language']
       if file['translations']:
-        lang_direction = 'en-' + file['language']
+        lang_direction = self.source_language + '-' + file['language']
         data = {
           'key' : self.API_KEYS[api_key],
           'lang': lang_direction,
